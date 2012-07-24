@@ -1,0 +1,127 @@
+body
+{
+  background:url(./images/background.png) top left;
+  color:#DDD;
+  margin:0px;
+  padding:25px;
+  font-family: Nobile, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+hr
+{
+  border: 1px dashed #666;
+}
+
+canvas
+{
+  border: 1px dashed #666;
+}
+
+input[type="range"]
+{
+    width:350px;
+}
+
+#page
+{
+  width:816px;
+  margin:0px auto;
+}
+
+#wrapper
+{
+  background-color:#2E2E2E;
+  border-radius:0 15px 15px 15px;
+  padding:6px;
+}
+
+#header
+{
+  float:left;
+  font-family:Oswald, Georgia, 'Times New Roman', Times, serif;
+  font-size:32px;
+  margin-bottom:10px;
+}
+
+#connection
+{
+  padding:16px 0;
+  float:right;
+}
+
+#connect
+{
+  width:100px;
+}
+
+#footer
+{
+  padding:4px 20px;
+  height:60px;
+}
+
+.tab
+{
+  list-style:none;
+  padding:0;
+  margin:0;
+  line-height:24px;
+}
+
+.tab li
+{
+  margin:0 3px 0 0;
+  padding:0 10px;
+  border:1px solid #4E4E4E;
+  border-radius:5px 5px 0 0;
+  background:#4E4E4E;
+  display: inline-block;
+}
+
+.tab li.selected
+{
+  border:1px solid #2E2E2E;
+  border-radius:5px 5px 0 0;
+  background:#2E2E2E;
+}
+
+.tab li:hover
+{
+  cursor:pointer;
+}
+
+.motor
+{
+  width:400px;
+}
+
+.clear
+{
+  clear:both;
+}
+
+#leftMotor
+{
+  float:left;
+}
+
+#rightMotor
+{
+  float:right;
+}
+
+#copyright
+{
+  float:left;
+  text-align:left;
+  margin-top:20px;
+}
+
+#dart-logo
+{
+  float:right;
+  width:115px;
+  height:50px;
+  background-image:url('images/dart.png');
+}
