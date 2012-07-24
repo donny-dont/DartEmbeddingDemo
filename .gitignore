@@ -1,12 +1,9 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
+# Visual Studio Files
+*.sdf
+*.suo
+*.user
 
-# Compiled Dynamic libraries
-*.so
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
+# Visual Studio Directories
+Debug
+Release
+ipch
