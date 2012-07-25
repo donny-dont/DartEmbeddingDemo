@@ -38,7 +38,7 @@ class Point2D implements Point
 class GamePadCanvas
 {
   /// Position of the XBox 360 controller
-  static final Point2D _controllerPosition = const Point2D(0, 0);
+  static final Point2D _controllerPosition = const Point2D(50, 10);
   /// Position of the XBox button
   static final Point2D _xBoxButtonPosition = const Point2D(351, 107);
   /// Position of the X button
@@ -71,6 +71,21 @@ class GamePadCanvas
   static final Point2D _rightThumbstickCenter = const Point2D(514, 294.5);
   /// The radius of the thumbstick
   static final double _thumbstickRadius = 25.0;
+  
+  /// Position of the left trigger meter
+  static final Point2D _leftTriggerMeterPosition = const Point2D(22, 110);
+  /// Position of the right trigger meter
+  static final Point2D _rightTriggerMeterPosition = const Point2D(849, 110);
+  /// The border color for the meter
+  static final String _meterStrokeStyle = 'rgba(255, 255, 255, 1.0)';
+  /// The meter color
+  static final String _meterFillStyle = 'rgba(191, 191, 191, 1.0)';
+  /// The border thickness of the meter
+  static final double _meterBorderThickness = 2.0;
+  /// The width of the meter
+  static final double _meterWidth = 29.0;
+  /// The height of the meter
+  static final double _meterHeight = 204.0;
   
   /// The color to use when drawing circles
   static final String _circleFillStyle = 'rgba(251, 239, 42, 0.75)';
@@ -133,7 +148,7 @@ class GamePadCanvas
     // Get the game pad
     
     // Draw the game pad
-    _drawImage(_controllerImage, _controllerPosition);
+    _context.drawImage(_controllerImage, _controllerPosition.x, _controllerPosition.y);
     
     // See if the game pad is connected
     if (_gamePadState.isConnected)
@@ -174,6 +189,10 @@ class GamePadCanvas
         _drawCircle(12, _dPadRightButtonPosition);
     }
     
+    // Draw meters showing the triggers
+    _drawTriggerMeter(_leftTriggerMeterPosition, 0.5);
+    _drawTriggerMeter(_rightTriggerMeterPosition, 0.75);
+    
     // Draw thumbsticks
     _drawThumbstick(_leftThumbstickImage, _gamePadState.leftThumbstick, _leftThumbstickCenter, _gamePadState.leftStick);
     _drawThumbstick(_rightThumbstickImage, _gamePadState.rightThumbstick, _rightThumbstickCenter, _gamePadState.rightStick);
@@ -181,7 +200,10 @@ class GamePadCanvas
   
   void _drawImage(ImageElement image, Point2D position)
   {
-    _context.drawImage(image, position.x, position.y);
+    num x = _controllerPosition.x + position.x;
+    num y = _controllerPosition.y + position.y;
+    
+    _context.drawImage(image, x, y);
   }
   
   void _drawCircle(int radius, Point2D position)
@@ -191,6 +213,10 @@ class GamePadCanvas
     
   void _drawCircleAt(int radius, num x, num y)
   {
+    x += _controllerPosition.x;
+    y += _controllerPosition.y;
+    
+    _context.strokeStyle = _circleFillStyle;
     _context.fillStyle = _circleFillStyle;
     _context.beginPath();
     _context.arc(x, y, radius, 0, Math.PI*2, true);
@@ -200,8 +226,8 @@ class GamePadCanvas
   
   void _drawThumbstick(ImageElement image, Point2D value, Point2D center, bool pressed)
   {
-    num centerX = (value.x * _thumbstickRadius) + center.x; 
-    num centerY = (value.y * _thumbstickRadius) + center.y;
+    num centerX = (value.x * _thumbstickRadius) + center.x + _controllerPosition.x; 
+    num centerY = (value.y * _thumbstickRadius) + center.y + _controllerPosition.y;
     
     num imageX = centerX - (image.width * 0.5);
     num imageY = centerY - (image.height * 0.5);
@@ -210,6 +236,31 @@ class GamePadCanvas
     
     if (pressed)
       _drawCircleAt(12, centerX, centerY);
+  }
+  
+  void _drawTriggerMeter(Point2D position, num fill)
+  {
+    // Draw the outline
+    _context.strokeStyle = _meterStrokeStyle;
+    _context.lineWidth = _meterBorderThickness;
+    
+    _context.strokeRect(position.x, position.y, _meterWidth, _meterHeight);
+    
+    // Draw the filled meter
+    if (fill > 0.0)
+    {
+      num totalBorderThickness = 2.0 * _meterBorderThickness;
+      num width = _meterWidth - totalBorderThickness;
+      num meterHeight = _meterHeight - totalBorderThickness;
+      num height = fill * meterHeight;
+      
+      num x = position.x + _meterBorderThickness;
+      num y = position.y + _meterBorderThickness + (meterHeight - height);
+      
+      _context.strokeStyle = _meterFillStyle;
+      _context.fillStyle = _meterFillStyle;
+      _context.fillRect(x, y, width, height);
+    }
   }
   
   static ImageElement _loadImage(String source)

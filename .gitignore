@@ -7,3 +7,7 @@
 Debug
 Release
 ipch
+
+# Eclipse Files
+.children
+.project
