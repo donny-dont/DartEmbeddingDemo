@@ -27,33 +27,172 @@
 
 class GamePadState
 {
+  static final int _dPadUp        = 1 <<  0;
+  static final int _dPadLeft      = 1 <<  1;
+  static final int _dPadRight     = 1 <<  2;
+  static final int _dPadDown      = 1 <<  3;
+  static final int _start         = 1 <<  4;
+  static final int _back          = 1 <<  5;
+  static final int _leftThumb     = 1 <<  6;
+  static final int _rightThumb    = 1 <<  7;
+  static final int _leftShoulder  = 1 <<  8;
+  static final int _rightShoulder = 1 <<  9;
+  static final int _aButton       = 1 << 11;
+  static final int _bButton       = 1 << 12;
+  static final int _xButton       = 1 << 13;
+  static final int _yButton       = 1 << 14;
+  
+  /// Whether the controller is connected
+  bool _connected;
+  /// The state of the left thumbstick
   Point2D _leftThumbstick;
+  /// The state of the right thumbstick
   Point2D _rightThumbstick;
+  /// The state of the left trigger
+  double _leftTrigger;
+  /// The state of the right trigger
+  double _rightTrigger;
+  /// The state of the buttons
+  int _buttons;
+  
   GamePadState()
-    : _leftThumbstick = new Point2D(0, 0)
-    , _rightThumbstick = new Point2D(0, 0);
+    : _connected = false
+    , _leftThumbstick = new Point2D(0, 0)
+    , _rightThumbstick = new Point2D(0, 0)
+    , _leftTrigger = 0.0
+    , _rightTrigger = 0.0
+    , _buttons = 0;
   
-  bool get isConnected() => true;
-  bool get up() => true;
-  bool get down() => true;
-  bool get left() => true;
-  bool get right() => true;
-  bool get back() => true;
-  bool get start() => true;
-  bool get leftShoulder() => true;
-  bool get rightShoulder() => true;
-  bool get leftStick() => false;
-  bool get rightStick() => false;
-  bool get x() => true;
-  bool get y() => true;
-  bool get a() => true;
-  bool get b() => true;
+  bool get isConnected()   => _connected;
+  bool get up()            => _isFlagSet(_dPadUp);
+  bool get down()          => _isFlagSet(_dPadDown);
+  bool get left()          => _isFlagSet(_dPadLeft);
+  bool get right()         => _isFlagSet(_dPadRight);
+  bool get back()          => _isFlagSet(_back);
+  bool get start()         => _isFlagSet(_start);
+  bool get leftShoulder()  => _isFlagSet(_leftShoulder);
+  bool get rightShoulder() => _isFlagSet(_rightShoulder);
+  bool get leftStick()     => _isFlagSet(_leftThumb);
+  bool get rightStick()    => _isFlagSet(_rightThumb);
+  bool get x()             => _isFlagSet(_xButton);
+  bool get y()             => _isFlagSet(_yButton);
+  bool get a()             => _isFlagSet(_aButton);
+  bool get b()             => _isFlagSet(_bButton);
   
+  double get leftTrigger() => _leftTrigger;
+  double get rightTrigger() => _rightTrigger;
   Point2D get leftThumbstick() => _leftThumbstick;
   Point2D get rightThumbstick() => _rightThumbstick;
+  
+  void cloneTo(GamePadState state)
+  {
+    state._connected = _connected;
+    state._buttons = _buttons;
+    state._leftTrigger = _leftTrigger;
+    state._rightTrigger = _rightTrigger;
+    
+    //state._leftThumbstick.x = _leftThumbstick.x;
+    //state._leftThumbstick.y = _leftThumbstick.y;
+    
+    //state._rightThumbstick.x = _rightThumbstick.x;
+    //state._rightThumbstick.y = _rightThumbstick.y;
+  }
+  
+  void reset()
+  {
+    _connected = false;
+    _buttons = 0;
+    _leftTrigger = 0.0;
+    _rightTrigger = 0.0;
+  }
+  
+  bool _isFlagSet(int flag)
+  {
+    return (_buttons & flag) == flag;
+  }
 }
 
 class GamePad
 {
+  /// The port to connect on
+  static final int _port = 8000;
+  /// Socket connection to the server
+  static WebSocket _connection;
+  /// Whether the connection has been made
+  static bool _connected;
+  /// List of game pads
+  static List<GamePadState> _gamePads;
   
+  static void onInitialize()
+  {
+    _gamePads = new List<GamePadState>();
+    _gamePads.add(new GamePadState());
+    _gamePads.add(new GamePadState());
+    _gamePads.add(new GamePadState());
+    _gamePads.add(new GamePadState());
+    
+    _connected = false;
+  }
+  
+  static void getState(int index, GamePadState state)
+  {
+    if ((_connection != null) && (_connected))
+    {
+      int player = index + 1;
+      _connection.send('player$player');
+    }
+    
+    _gamePads[index].cloneTo(state);
+  }
+  
+  static void setVibration(int index, double leftMotor, double rightMotor)
+  {
+    
+  }
+  
+  static void connectToServer(String ip)
+  {
+    if (_connection != null)
+      disconnectFromServer;
+    
+    _connection = new WebSocket('ws://$ip:$_port/ws');
+    _connection.on.open.add((e) {
+      print("Connected!");
+      _connected = true;
+    });
+    
+    _connection.on.close.add((e) {
+      print("Disconnected!");
+      _connected = false;
+      
+      for (GamePadState gamePad in _gamePads)
+        gamePad.reset();
+    });
+    
+    _connection.on.message.add((e) {
+      _receiveMessage(e.data);
+    });
+  }
+  
+  static void disconnectFromServer()
+  {
+    if (_connection != null)
+    {
+      _connection.close();
+      _connection = null;
+    }
+  }
+  
+  static void _receiveMessage(String message)
+  {
+    Map json = JSON.parse(message);
+    
+    int index = json['index'];
+    GamePadState gamePad = _gamePads[index];
+    
+    gamePad._connected = json['connected'];
+    gamePad._leftTrigger = json['leftTrigger'];
+    gamePad._rightTrigger = json['rightTrigger'];
+    gamePad._buttons = json['buttons'];
+  }
 }

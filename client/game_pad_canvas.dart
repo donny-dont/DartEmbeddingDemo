@@ -143,9 +143,15 @@ class GamePadCanvas
     _playerImages.add(_loadImage('images/player_4.png'));
   }
   
+  int get playerIndex() => _playerIndex;
+  set playerIndex(int value) { _playerIndex = value; }
+  
   void draw()
   {
+    _context.clearRect(0, 0, _canvas.width, _canvas.height);
+    
     // Get the game pad
+    GamePad.getState(_playerIndex, _gamePadState);
     
     // Draw the game pad
     _context.drawImage(_controllerImage, _controllerPosition.x, _controllerPosition.y);
@@ -190,8 +196,8 @@ class GamePadCanvas
     }
     
     // Draw meters showing the triggers
-    _drawTriggerMeter(_leftTriggerMeterPosition, 0.5);
-    _drawTriggerMeter(_rightTriggerMeterPosition, 0.75);
+    _drawTriggerMeter(_leftTriggerMeterPosition, _gamePadState.leftTrigger);
+    _drawTriggerMeter(_rightTriggerMeterPosition, _gamePadState.rightTrigger);
     
     // Draw thumbsticks
     _drawThumbstick(_leftThumbstickImage, _gamePadState.leftThumbstick, _leftThumbstickCenter, _gamePadState.leftStick);

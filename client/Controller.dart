@@ -26,6 +26,7 @@
  */
 
 #import('dart:html');
+#import('dart:json');
 #source('game_pad.dart');
 #source('game_pad_canvas.dart');
 
@@ -41,11 +42,14 @@ void connectClicked(e)
   if (_connected)
   {
     // Disconnect
+    GamePad.disconnectFromServer();
+    
     _connectButton.value = "Connect";
   }
   else
   {
     // Connect
+    GamePad.connectToServer(_url.value);
     
     _connectButton.value = "Disconnect";
   }
@@ -64,6 +68,7 @@ void setupTab(String id, int index)
     tab.classes.add('selected');
     
     _selected = tab;
+    _canvas.playerIndex = index;
   }
   
   tab.on.click.add(tabClicked);
@@ -81,6 +86,8 @@ bool update(int time)
 
 void main()
 {
+  // Setup the gamepad class
+  GamePad.onInitialize();
   // Setup the gamepad canvas
   _canvas = new GamePadCanvas('#gamepad');
   
