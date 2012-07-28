@@ -27,15 +27,38 @@
 
 #import('dart:html');
 #import('dart:json');
+#source('error_message.dart');
 #source('game_pad.dart');
 #source('game_pad_canvas.dart');
 
 GamePadCanvas _canvas;
+ErrorMessage _errorMessage;
 
 Element _selected;
+Element _status;
 bool _connected = false;
 InputElement _url;
 InputElement _connectButton;
+
+void connectionOpened(e)
+{
+  _status.classes.clear();
+  _status.classes.add('connected');
+}
+
+void connectionClosed(CloseEvent e)
+{
+  // Check for an abnomal close
+  if (e.code == 1006)
+  {
+    String message = GamePad.isConnected ? "Server connection was lost" : "Could not connect to server";
+
+    _errorMessage.showError(message);
+  }
+  
+  _connected = false;
+  _connectButton.value = "Connect";
+}
 
 void connectClicked(e)
 {
@@ -43,14 +66,17 @@ void connectClicked(e)
   {
     // Disconnect
     GamePad.disconnectFromServer();
+
+    _status.classes.clear();
+    _status.classes.add('disconnected');
     
     _connectButton.value = "Connect";
   }
   else
   {
     // Connect
-    GamePad.connectToServer(_url.value);
-    
+    GamePad.connectToServer(_url.value, connectionClosed);
+    _errorMessage.hideError();
     _connectButton.value = "Disconnect";
   }
 
@@ -88,6 +114,13 @@ void main()
 {
   // Setup the gamepad class
   GamePad.onInitialize();
+  
+  // Setup the error message
+  _errorMessage = new ErrorMessage('#errorMessage');
+  
+  // Setup the status indicator
+  _status = document.query('#status');
+  
   // Setup the gamepad canvas
   _canvas = new GamePadCanvas('#gamepad');
   

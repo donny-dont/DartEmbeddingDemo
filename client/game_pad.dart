@@ -25,6 +25,26 @@
  *   distribution.
  */
 
+class Vector2D implements Point
+{
+  num x;
+  num y;
+  
+  Vector2D(this.x, this.y);
+  
+  void cloneTo(Vector2D copy)
+  {
+    copy.x = x;
+    copy.y = y;
+  }
+  
+  void setValues(num x, num y)
+  {
+    this.x = x;
+    this.y = y;
+  }
+}
+
 class GamePadState
 {
   static final int _dPadUp        = 1 <<  0;
@@ -45,9 +65,9 @@ class GamePadState
   /// Whether the controller is connected
   bool _connected;
   /// The state of the left thumbstick
-  Point2D _leftThumbstick;
+  Vector2D _leftThumbstick;
   /// The state of the right thumbstick
-  Point2D _rightThumbstick;
+  Vector2D _rightThumbstick;
   /// The state of the left trigger
   double _leftTrigger;
   /// The state of the right trigger
@@ -57,8 +77,8 @@ class GamePadState
   
   GamePadState()
     : _connected = false
-    , _leftThumbstick = new Point2D(0, 0)
-    , _rightThumbstick = new Point2D(0, 0)
+    , _leftThumbstick = new Vector2D(0, 0)
+    , _rightThumbstick = new Vector2D(0, 0)
     , _leftTrigger = 0.0
     , _rightTrigger = 0.0
     , _buttons = 0;
@@ -81,8 +101,8 @@ class GamePadState
   
   double get leftTrigger() => _leftTrigger;
   double get rightTrigger() => _rightTrigger;
-  Point2D get leftThumbstick() => _leftThumbstick;
-  Point2D get rightThumbstick() => _rightThumbstick;
+  Vector2D get leftThumbstick() => _leftThumbstick;
+  Vector2D get rightThumbstick() => _rightThumbstick;
   
   void cloneTo(GamePadState state)
   {
@@ -91,11 +111,8 @@ class GamePadState
     state._leftTrigger = _leftTrigger;
     state._rightTrigger = _rightTrigger;
     
-    //state._leftThumbstick.x = _leftThumbstick.x;
-    //state._leftThumbstick.y = _leftThumbstick.y;
-    
-    //state._rightThumbstick.x = _rightThumbstick.x;
-    //state._rightThumbstick.y = _rightThumbstick.y;
+    _leftThumbstick.cloneTo(state._leftThumbstick);
+    _rightThumbstick.cloneTo(state._rightThumbstick);
   }
   
   void reset()
@@ -104,6 +121,9 @@ class GamePadState
     _buttons = 0;
     _leftTrigger = 0.0;
     _rightTrigger = 0.0;
+    
+    _leftThumbstick.setValues(0.0, 0.0);
+    _rightThumbstick.setValues(0.0, 0.0);
   }
   
   bool _isFlagSet(int flag)
@@ -122,6 +142,8 @@ class GamePad
   static bool _connected;
   /// List of game pads
   static List<GamePadState> _gamePads;
+  
+  static bool get isConnected() => _connected;
   
   static void onInitialize()
   {
@@ -150,25 +172,33 @@ class GamePad
     
   }
   
-  static void connectToServer(String ip)
+  static void connectToServer(String ip, EventListener onClose)
   {
     if (_connection != null)
       disconnectFromServer;
-    
+
+    // Setup the connection
     _connection = new WebSocket('ws://$ip:$_port/ws');
+    
     _connection.on.open.add((e) {
       print("Connected!");
       _connected = true;
     });
     
-    _connection.on.close.add((e) {
-      print("Disconnected!");
+    // Setup notification for when the socket closes
+    // Add the onClose function first so the state of
+    // _connected can be queried before its set to false
+    _connection.on.close.add(onClose);
+    
+    _connection.on.close.add((CloseEvent e) {
+      print("Disconnected! ${e.code} ${e.reason}");
       _connected = false;
       
       for (GamePadState gamePad in _gamePads)
         gamePad.reset();
     });
     
+    // Receive the game pad updates
     _connection.on.message.add((e) {
       _receiveMessage(e.data);
     });
@@ -194,5 +224,19 @@ class GamePad
     gamePad._leftTrigger = json['leftTrigger'];
     gamePad._rightTrigger = json['rightTrigger'];
     gamePad._buttons = json['buttons'];
+    
+    num x;
+    num y;
+    Map thumbstick;
+    
+    thumbstick = json['leftThumbstick'];
+    x = thumbstick['x'];
+    y = thumbstick['y'];
+    gamePad._leftThumbstick.setValues(x, y);
+    
+    thumbstick = json['rightThumbstick'];
+    x = thumbstick['x'];
+    y = thumbstick['y'];
+    gamePad._rightThumbstick.setValues(x, y);
   }
 }

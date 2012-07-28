@@ -3,18 +3,19 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Controller</title>
+    <title>Dart Embedding Example: Game Pad</title>
     <link rel="stylesheet" href="Controller.css">
     <link href="http://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Oswald:700" rel="stylesheet" type="text/css">
   </head>
   <body>
+    <div id="errorMessage">Could not connect</div>
     <div id="page">
-      <div id="header">Input monitor</div>
+      <div id="header">Game pad monitor</div>
       <div id="connection">
-        <input id="url" type="text" value="127.0.0.1" /><input id="connect" type="button" value="Connect" />
+        <input id="url" type="text" value="127.0.0.1" /><input id="connect" type="button" class="connect" value="Connect" />
       </div>
-      <div class="clear" />
+      <div class="clear"></div>
       <div>
         <ul class="tab">
           <li id="player1" class="selected">Player 1</li>
@@ -22,24 +23,25 @@
           <li id="player3">Player 3</li>
           <li id="player4">Player 4</li>
         </ul>
+        <div id="status" class="disconnected"></div>
       </div>
+      <div class="clear"></div>
       <div id="wrapper">
-        <div style="text-align:right;">State</div>
         <canvas id="gamepad" width="900" height="578"></canvas>
         <div style="text-align:right;">Vibration</div>
         <div style="border: 1px dashed #666; height:45px;">
           <div class="motor" id="leftMotor">
             <div class="name">Left Motor:</div>
-            <input type="range" min="0" max="100" />
+            <input type="range" min="0" max="100" value="0" />
           </div>
           <div class="motor" id="rightMotor">
             <div class="name">Right Motor:</div>
-            <input type="range" min="0" max="100" />
+            <input type="range" min="0" max="100" value="0" />
           </div>
         </div>
         <div class="clear">
         <div id="footer">
-          <div id="copyright">© 2012 Don Olmstead. All rights reserved.</div>
+          <div id="copyright">&copy; 2012 Don Olmstead. All rights reserved.</div>
           <div id="dart-logo"></div>
         </div>
         <div class="clear"/>

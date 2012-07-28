@@ -204,7 +204,7 @@ class GamePadCanvas
     _drawThumbstick(_rightThumbstickImage, _gamePadState.rightThumbstick, _rightThumbstickCenter, _gamePadState.rightStick);
   }
   
-  void _drawImage(ImageElement image, Point2D position)
+  void _drawImage(ImageElement image, Point position)
   {
     num x = _controllerPosition.x + position.x;
     num y = _controllerPosition.y + position.y;
@@ -212,7 +212,7 @@ class GamePadCanvas
     _context.drawImage(image, x, y);
   }
   
-  void _drawCircle(int radius, Point2D position)
+  void _drawCircle(int radius, Point position)
   {
     _drawCircleAt(radius, position.x, position.y);
   }
@@ -230,7 +230,7 @@ class GamePadCanvas
     _context.fill();
   }
   
-  void _drawThumbstick(ImageElement image, Point2D value, Point2D center, bool pressed)
+  void _drawThumbstick(ImageElement image, Point value, Point center, bool pressed)
   {
     num centerX = (value.x * _thumbstickRadius) + center.x + _controllerPosition.x; 
     num centerY = (value.y * _thumbstickRadius) + center.y + _controllerPosition.y;
@@ -244,7 +244,7 @@ class GamePadCanvas
       _drawCircleAt(12, centerX, centerY);
   }
   
-  void _drawTriggerMeter(Point2D position, num fill)
+  void _drawTriggerMeter(Point position, num fill)
   {
     // Draw the outline
     _context.strokeStyle = _meterStrokeStyle;
