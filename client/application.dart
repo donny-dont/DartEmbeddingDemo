@@ -38,7 +38,7 @@ class Application
   /// Error message
   ErrorMessage _errorMessage;
   /// Canvas that the game pad's state is displayed on.
-  GamePadCanvas _gamePadCanvas;
+  GamePadView _gamePadCanvas;
   /// Element containing the url to connect to.
   InputElement _url;
   /// Button to initiate the server connection.
@@ -60,7 +60,7 @@ class Application
     _errorMessage = new ErrorMessage('#errorMessage');
     
     // Setup the gamepad canvas
-    _gamePadCanvas = new GamePadCanvas('#gamepad');
+    _gamePadCanvas = new GamePadView('#gamepad');
     
     // Setup the tabbed UI
     _selectedTab = document.query('#player1');
@@ -81,9 +81,8 @@ class Application
   void _setupTab(String id, int index)
   {
     Element tab = document.query(id);
-    
-    void tabClicked(e)
-    {
+        
+    tab.on.click.add((e) {
       // Remove the selected class
       _selectedTab.classes.remove('selected');
       
@@ -92,10 +91,8 @@ class Application
       _selectedTab = tab;
       
       // Notify that the tab was clicked
-      _onTabClicked(index);
-    }
-    
-    tab.on.click.add(tabClicked);
+      _onTabClicked(index);      
+    });
   }
   
   //---------------------------------------------------------------------
@@ -104,7 +101,7 @@ class Application
   
   void update()
   {
-    _gamePadCanvas.draw();
+    _gamePadCanvas.update();
   }
   
   //---------------------------------------------------------------------

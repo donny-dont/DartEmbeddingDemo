@@ -35,8 +35,12 @@ class Point2D implements Point
   const Point2D(num this.x, num this.y);
 }
 
-class GamePadCanvas
+class GamePadView
 {
+  //---------------------------------------------------------------------
+  // Class variables
+  //---------------------------------------------------------------------  
+  
   /// Position of the XBox 360 controller
   static final Point2D _controllerPosition = const Point2D(50, 10);
   /// Position of the XBox button
@@ -90,10 +94,22 @@ class GamePadCanvas
   /// The color to use when drawing circles
   static final String _circleFillStyle = 'rgba(251, 239, 42, 0.75)';
   
+  //---------------------------------------------------------------------
+  // Member variables
+  //---------------------------------------------------------------------  
+  
   /// The canvas element
   CanvasElement _canvas;
   /// The rendering context
   CanvasRenderingContext2D _context;
+  /// The index of the player being displayed
+  int _playerIndex;
+  /// State of the gamepad
+  GamePadState _gamePadState;
+  
+  //---------------------------------------------------------------------
+  // Image variables
+  //---------------------------------------------------------------------  
   
   /// Image of the XBox 360 controller
   ImageElement _controllerImage;
@@ -111,11 +127,37 @@ class GamePadCanvas
   ImageElement _aButtonImage;
   /// Image of the B button
   ImageElement _bButtonImage;
+
+  //---------------------------------------------------------------------
+  // Overlay variables
+  //---------------------------------------------------------------------  
   
-  int _playerIndex;
-  GamePadState _gamePadState;
+  /// Container for the left trigger value.
+  Element _leftTriggerElement;
+  /// Value for the left trigger.
+  Element _leftTriggerValue;
+  /// Container for the right trigger value.
+  Element _rightTriggerElement;
+  /// Value for the right trigger.
+  Element _rightTriggerValue;
+  /// Container for the left thumbstick values.
+  Element _leftThumbstickElement;
+  /// X value for the left thumbstick.
+  Element _leftThumbstickXValue;
+  /// Y value for the left thumbstick.
+  Element _leftThumbstickYValue;
+  /// Container for the right thumbstick values.
+  Element _rightThumbstickElement;
+  /// X value for the right thumbstick.
+  Element _rightThumbstickXValue;
+  /// Y value for the right thumbstick.
+  Element _rightThumbstickYValue;
   
-  GamePadCanvas(String id)
+  //---------------------------------------------------------------------
+  // Initialization
+  //---------------------------------------------------------------------  
+  
+  GamePadView(String id)
   {
     _playerIndex = 0;
     _gamePadState = new GamePadState();
@@ -126,6 +168,15 @@ class GamePadCanvas
     _context = _canvas.getContext('2d');
     assert(_context != null);
     
+    _setupImages();
+    _setupOverlay();    
+  }
+
+  /**
+   * Setup the game pad images.
+   */
+  void _setupImages()
+  {
     // Load the images
     _controllerImage = _loadImage('images/controller.png');
     _leftThumbstickImage = _loadImage('images/left_thumb.png');
@@ -140,18 +191,95 @@ class GamePadCanvas
     _playerImages.add(_loadImage('images/player_1.png'));
     _playerImages.add(_loadImage('images/player_2.png'));
     _playerImages.add(_loadImage('images/player_3.png'));
-    _playerImages.add(_loadImage('images/player_4.png'));
+    _playerImages.add(_loadImage('images/player_4.png'));    
   }
   
+  /**
+   * Setup the overlay.
+   */
+  void _setupOverlay()
+  {
+    // Setup the trigger views
+    _leftTriggerElement = document.query('#leftTrigger');
+    _rightTriggerElement = document.query('#rightTrigger');
+    
+    _leftTriggerValue = _leftTriggerElement.query('.triggerValue');
+    _rightTriggerValue = _rightTriggerElement.query('.triggerValue');
+    
+    // Setup the thumbstick views
+    _leftThumbstickElement = document.query('#leftThumbstick');
+    _rightThumbstickElement = document.query('#rightThumbstick');
+    
+    _leftThumbstickXValue = _leftThumbstickElement.query('.xValue');
+    _leftThumbstickYValue = _leftThumbstickElement.query('.yValue');
+
+    _rightThumbstickXValue = _rightThumbstickElement.query('.xValue');
+    _rightThumbstickYValue = _rightThumbstickElement.query('.yValue');    
+    
+    // Hook into the checkbox
+    _setupCheckbox();
+  }
+  
+  void _setupCheckbox()
+  {
+    InputElement checkbox = document.query('#toggleValues');
+    
+    checkbox.on.change.add((e) {
+      String visible = checkbox.checked ? 'visible' : 'hidden';
+      
+      _leftTriggerElement.style.visibility = visible;
+      _rightTriggerElement.style.visibility = visible;
+      
+      _leftThumbstickElement.style.visibility  = visible;
+      _rightThumbstickElement.style.visibility  = visible;
+    });
+  }
+  
+  //---------------------------------------------------------------------
+  // Properties
+  //---------------------------------------------------------------------  
+
   int get playerIndex() => _playerIndex;
   set playerIndex(int value) { _playerIndex = value; }
+
+  //---------------------------------------------------------------------
+  // Update methods
+  //---------------------------------------------------------------------
+  
+  void update()
+  {
+    // Get the game pad
+    GamePad.getState(_playerIndex, _gamePadState);
+    
+    // Update the overlay
+    _updateTriggerValues(_leftTriggerValue, _gamePadState.leftTrigger);
+    _updateTriggerValues(_rightTriggerValue, _gamePadState.rightTrigger);
+    
+    _updateThumbstickValues(_leftThumbstickXValue, _leftThumbstickYValue, _gamePadState.leftThumbstick);
+    _updateThumbstickValues(_rightThumbstickXValue, _rightThumbstickYValue, _gamePadState.rightThumbstick);    
+    
+    // Draw the canvas
+    draw();
+  }
+  
+  void _updateTriggerValues(Element element, double value)
+  {
+    element.innerHTML = value.toStringAsPrecision(3);
+  }
+  
+  void _updateThumbstickValues(Element xElement, Element yElement, Point value)
+  {
+    xElement.innerHTML = value.x.toStringAsPrecision(3);
+    yElement.innerHTML = value.y.toStringAsPrecision(3);
+  }
+  
+  //---------------------------------------------------------------------
+  // Drawing methods
+  //---------------------------------------------------------------------    
   
   void draw()
   {
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
-    
-    // Get the game pad
-    GamePad.getState(_playerIndex, _gamePadState);
     
     // Draw the game pad
     _context.drawImage(_controllerImage, _controllerPosition.x, _controllerPosition.y);
@@ -232,8 +360,8 @@ class GamePadCanvas
   
   void _drawThumbstick(ImageElement image, Point value, Point center, bool pressed)
   {
-    num centerX = (value.x * _thumbstickRadius) + center.x + _controllerPosition.x; 
-    num centerY = (value.y * _thumbstickRadius) + center.y + _controllerPosition.y;
+    num centerX = ( value.x * _thumbstickRadius) + center.x + _controllerPosition.x; 
+    num centerY = (-value.y * _thumbstickRadius) + center.y + _controllerPosition.y;
     
     num imageX = centerX - (image.width * 0.5);
     num imageY = centerY - (image.height * 0.5);
@@ -268,7 +396,11 @@ class GamePadCanvas
       _context.fillRect(x, y, width, height);
     }
   }
-  
+
+  //---------------------------------------------------------------------
+  // Image loading
+  //---------------------------------------------------------------------  
+
   static ImageElement _loadImage(String source)
   {
     ImageElement image = new ImageElement();
