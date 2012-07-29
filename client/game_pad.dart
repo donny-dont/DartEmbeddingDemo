@@ -142,6 +142,8 @@ class GamePad
   static bool _connected;
   /// List of game pads
   static List<GamePadState> _gamePads;
+  /// The last requested player index
+  static int _playerIndex;
   
   static bool get isConnected() => _connected;
   
@@ -154,14 +156,23 @@ class GamePad
     _gamePads.add(new GamePadState());
     
     _connected = false;
+    _playerIndex = -1;
   }
   
   static void getState(int index, GamePadState state)
   {
     if ((_connection != null) && (_connected))
     {
-      int player = index + 1;
-      _connection.send('player$player');
+      // See if a new index is being requested
+      // If so notify the server
+      if (_playerIndex != index)
+      {
+        String message = '{ "type": "index", "index": $index }';
+      
+        _connection.send(message);
+        
+        _playerIndex = index;
+      }
     }
     
     _gamePads[index].cloneTo(state);
@@ -171,9 +182,9 @@ class GamePad
   {
     if ((_connection != null) && (_connected))
     {
-      String message = '{ "index":$index, "leftMotor":$leftMotor, "rightMotor":$rightMotor }';
+      String message = '{ "type": "vibration", "index": $index, "leftMotor": $leftMotor, "rightMotor": $rightMotor }';
       
-      print(message);
+      _connection.send(message);
     }
   }
   
@@ -197,6 +208,7 @@ class GamePad
     _connection.on.close.add((CloseEvent e) {
       print("Disconnected! ${e.code} ${e.reason}");
       _connected = false;
+      _playerIndex = -1;
       
       for (GamePadState gamePad in _gamePads)
         gamePad.reset();
