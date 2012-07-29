@@ -37,8 +37,6 @@ class Application
   bool _connected;
   /// Error message
   ErrorMessage _errorMessage;
-  /// Canvas that the game pad's state is displayed on.
-  GamePadView _gamePadCanvas;
   /// Element containing the url to connect to.
   InputElement _url;
   /// Button to initiate the server connection.
@@ -47,6 +45,10 @@ class Application
   ConnectionStatusIndicator _statusIndicator;
   /// The currently selected tab.
   Element _selectedTab;
+  /// Canvas that the game pad's state is displayed on.
+  GamePadView _gamePadCanvas;
+  /// Vibration controls
+  VibrationControls _vibrationControls;
 
   //---------------------------------------------------------------------
   // Initialization
@@ -76,6 +78,9 @@ class Application
 
     // Setup the status indicator
     _statusIndicator = new ConnectionStatusIndicator('#status');
+    
+    // Setup the vibration controls
+    _vibrationControls = new VibrationControls('#leftMotor', '#rightMotor');
   }
   
   void _setupTab(String id, int index)
@@ -163,6 +168,9 @@ class Application
     
     // Change the status indicator
     _statusIndicator.status = ConnectionStatus.Connected;
+    
+    // Enable vibration controls
+    _vibrationControls.enabled = true;
   }
   
   /**
@@ -192,6 +200,10 @@ class Application
     
     // Change the status indicator
     _statusIndicator.status = ConnectionStatus.Disconnected;
+    
+    // Disable vibration controls
+    _vibrationControls.reset();
+    _vibrationControls.enabled = false;
   }
   
   //---------------------------------------------------------------------
@@ -204,6 +216,7 @@ class Application
   void _onTabClicked(int index)
   {
     _gamePadCanvas.playerIndex = index;
+    _vibrationControls.playerIndex = index;
   }
 }
 

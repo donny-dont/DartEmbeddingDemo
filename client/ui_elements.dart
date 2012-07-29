@@ -100,5 +100,101 @@ class ErrorMessage
  */
 class VibrationControls
 {
+  /// Maximum value of the slider
+  static double _maxValue = 65535.0;
   
+  /// Left motor element
+  Element _leftMotorElement;
+  /// Right motor element
+  Element _rightMotorElement;
+  /// Left motor input element
+  InputElement _leftMotorInputElement;
+  /// Right motor input element
+  InputElement _rightMotorInputElement;
+  /// Left motor values
+  List<double> _leftMotorValues;
+  /// Right motor values
+  List<double> _rightMotorValues;
+  
+  /// The index of the player being displayed
+  int _playerIndex; 
+  
+  VibrationControls(String leftId, String rightId)
+  {
+    _playerIndex = 0;
+
+    // Setup the left motor
+    Element leftMotorRoot = document.query(leftId);
+    _leftMotorElement = leftMotorRoot.query('.motorValue');
+    _leftMotorInputElement = leftMotorRoot.query('input');
+    
+    _leftMotorValues = [ 0.0, 0.0, 0.0, 0.0 ];
+    
+    _setupCallback(_leftMotorInputElement, _leftMotorElement, _leftMotorValues);
+    
+    // Setup the right motor
+    Element rightMotorRoot = document.query(rightId);
+    _rightMotorElement = rightMotorRoot.query('.motorValue');
+    _rightMotorInputElement = rightMotorRoot.query('input');
+    
+    _rightMotorValues = [ 0.0, 0.0, 0.0, 0.0 ];
+    
+    _setupCallback(_rightMotorInputElement, _rightMotorElement, _rightMotorValues);
+  }
+  
+  set enabled(bool value)
+  {
+    bool disabled = !value;
+    
+    _leftMotorInputElement.disabled = disabled;
+    _rightMotorInputElement.disabled = disabled;
+  }
+  
+  int get playerIndex() => _playerIndex;
+  set playerIndex(int value)
+  {
+    _playerIndex = value;
+    
+    _onValueChanged();
+  }
+  
+  void reset()
+  {
+    _leftMotorValues[0] = 0.0;
+    _leftMotorValues[1] = 0.0;
+    _leftMotorValues[2] = 0.0;
+    _leftMotorValues[3] = 0.0;
+    
+    _rightMotorValues[0] = 0.0;
+    _rightMotorValues[1] = 0.0;
+    _rightMotorValues[2] = 0.0;
+    _rightMotorValues[3] = 0.0;
+    
+    _leftMotorInputElement.valueAsNumber = 0.0;
+    _rightMotorInputElement.valueAsNumber = 0.0;
+    
+    _onValueChanged();
+  }
+  
+  void _setupCallback(InputElement input, Element display, List<double> list)
+  {
+    input.on.change.add((e) {
+      // Store information
+      list[_playerIndex] = input.valueAsNumber / _maxValue;;
+      
+      // Notify that a value has changed
+      _onValueChanged();
+    });
+  }
+  
+  void _onValueChanged()
+  {
+    double leftMotor = _leftMotorValues[_playerIndex];
+    double rightMotor = _rightMotorValues[_playerIndex];
+    
+    _leftMotorElement.innerHTML = leftMotor.toStringAsPrecision(3);
+    _rightMotorElement.innerHTML = rightMotor.toStringAsPrecision(3);
+    
+    GamePad.setVibration(_playerIndex, leftMotor, rightMotor);
+  }
 }

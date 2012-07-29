@@ -169,7 +169,12 @@ class GamePad
   
   static void setVibration(int index, double leftMotor, double rightMotor)
   {
-    
+    if ((_connection != null) && (_connected))
+    {
+      String message = '{ "index":$index, "leftMotor":$leftMotor, "rightMotor":$rightMotor }';
+      
+      print(message);
+    }
   }
   
   static void connectToServer(String ip, EventListener onOpen, EventListener onClose)
