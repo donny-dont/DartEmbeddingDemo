@@ -28,7 +28,7 @@
 #import('dart:html');
 #import('dart:json');
 #source('game_pad.dart');
-#source('game_pad_canvas.dart');
+#source('game_pad_view.dart');
 #source('ui_elements.dart');
 
 class Application

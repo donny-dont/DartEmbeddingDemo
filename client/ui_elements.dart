@@ -155,7 +155,7 @@ class VibrationControls
   {
     _playerIndex = value;
     
-    _onValueChanged();
+    _updateView();
   }
   
   void reset()
@@ -170,17 +170,29 @@ class VibrationControls
     _rightMotorValues[2] = 0.0;
     _rightMotorValues[3] = 0.0;
     
-    _leftMotorInputElement.valueAsNumber = 0.0;
-    _rightMotorInputElement.valueAsNumber = 0.0;
+    _updateView();
+  }
+  
+  void _updateView()
+  {
+    double leftMotor = _leftMotorValues[_playerIndex];
+    double rightMotor = _rightMotorValues[_playerIndex];
     
-    _onValueChanged();
+    _leftMotorElement.innerHTML = leftMotor.toStringAsPrecision(3);
+    _rightMotorElement.innerHTML = rightMotor.toStringAsPrecision(3);
+    
+    _leftMotorInputElement.valueAsNumber = leftMotor * _maxValue;
+    _rightMotorInputElement.valueAsNumber = rightMotor * _maxValue;
   }
   
   void _setupCallback(InputElement input, Element display, List<double> list)
   {
     input.on.change.add((e) {
       // Store information
-      list[_playerIndex] = input.valueAsNumber / _maxValue;;
+      double value = input.valueAsNumber / _maxValue;
+      list[_playerIndex] = value;
+      
+      display.innerHTML = value.toStringAsPrecision(3);
       
       // Notify that a value has changed
       _onValueChanged();
@@ -191,9 +203,6 @@ class VibrationControls
   {
     double leftMotor = _leftMotorValues[_playerIndex];
     double rightMotor = _rightMotorValues[_playerIndex];
-    
-    _leftMotorElement.innerHTML = leftMotor.toStringAsPrecision(3);
-    _rightMotorElement.innerHTML = rightMotor.toStringAsPrecision(3);
     
     GamePad.setVibration(_playerIndex, leftMotor, rightMotor);
   }
