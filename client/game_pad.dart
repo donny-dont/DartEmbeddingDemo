@@ -38,10 +38,10 @@ class Vector2D implements Point
     copy.y = y;
   }
   
-  void setValues(num x, num y)
+  void setValues(num xValue, num yValue)
   {
-    this.x = x;
-    this.y = y;
+    x = xValue;
+    y = yValue;
   }
 }
 
@@ -172,7 +172,7 @@ class GamePad
     
   }
   
-  static void connectToServer(String ip, EventListener onClose)
+  static void connectToServer(String ip, EventListener onOpen, EventListener onClose)
   {
     if (_connection != null)
       disconnectFromServer;
@@ -180,16 +180,15 @@ class GamePad
     // Setup the connection
     _connection = new WebSocket('ws://$ip:$_port/ws');
     
+    // Connect to the open event
     _connection.on.open.add((e) {
       print("Connected!");
       _connected = true;
     });
     
-    // Setup notification for when the socket closes
-    // Add the onClose function first so the state of
-    // _connected can be queried before its set to false
-    _connection.on.close.add(onClose);
+    _connection.on.open.add(onOpen);
     
+    // Connect to the close event
     _connection.on.close.add((CloseEvent e) {
       print("Disconnected! ${e.code} ${e.reason}");
       _connected = false;
@@ -197,9 +196,11 @@ class GamePad
       for (GamePadState gamePad in _gamePads)
         gamePad.reset();
     });
+      
+    _connection.on.close.add(onClose);
     
     // Receive the game pad updates
-    _connection.on.message.add((e) {
+    _connection.on.message.add((MessageEvent e) {
       _receiveMessage(e.data);
     });
   }

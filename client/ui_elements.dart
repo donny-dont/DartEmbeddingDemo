@@ -5,13 +5,13 @@
 class ConnectionStatus
 {
   /// Connected to the server.
-  static final int Connected = const ConnectionStatus(0);
+  static final ConnectionStatus Connected = const ConnectionStatus(0);
   /// Connecting to the server.
-  static final int Connecting = const ConnectionStatus(1);
+  static final ConnectionStatus Connecting = const ConnectionStatus(1);
   /// Disconnected from the server.
-  static final int Disconnected = const ConnectionStatus(2);
+  static final ConnectionStatus Disconnected = const ConnectionStatus(2);
   
-  int value;
+  final int value;
   
   const ConnectionStatus(int this.value);
 }
@@ -38,7 +38,7 @@ class ConnectionStatusIndicator
   /**
    * The status of the server connection.
    */
-  int get status() => _status;
+  ConnectionStatus get status() => _status;
   set status(ConnectionStatus value)
   {
     _status = value;
@@ -53,8 +53,8 @@ class ConnectionStatusIndicator
   
   void _setStyle(String style)
   {
-    _element.styles.clear();
-    _element.styles.add(style);
+    _element.classes.clear();
+    _element.classes.add(style);
   }
 }
 

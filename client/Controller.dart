@@ -27,10 +27,193 @@
 
 #import('dart:html');
 #import('dart:json');
-#source('error_message.dart');
 #source('game_pad.dart');
 #source('game_pad_canvas.dart');
+#source('ui_elements.dart');
 
+class Application
+{
+  /// Whether the server has been connected to.
+  bool _connected;
+  /// Error message
+  ErrorMessage _errorMessage;
+  /// Canvas that the game pad's state is displayed on.
+  GamePadCanvas _gamePadCanvas;
+  /// Element containing the url to connect to.
+  InputElement _url;
+  /// Button to initiate the server connection.
+  InputElement _connectButton;
+  /// Status indicator for the server connection.
+  ConnectionStatusIndicator _statusIndicator;
+  /// The currently selected tab.
+  Element _selectedTab;
+
+  //---------------------------------------------------------------------
+  // Initialization
+  //---------------------------------------------------------------------  
+  
+  Application()
+  {
+    _connected = false;
+    
+    // Create the error message
+    _errorMessage = new ErrorMessage('#errorMessage');
+    
+    // Setup the gamepad canvas
+    _gamePadCanvas = new GamePadCanvas('#gamepad');
+    
+    // Setup the tabbed UI
+    _selectedTab = document.query('#player1');
+    _setupTab('#player1', 0);
+    _setupTab('#player2', 1);
+    _setupTab('#player3', 2);
+    _setupTab('#player4', 3);
+    
+    // Setup the connection button
+    _connectButton = document.query('#connect');
+    _connectButton.on.click.add(_onButtonClicked);
+    _url = document.query('#url');
+
+    // Setup the status indicator
+    _statusIndicator = new ConnectionStatusIndicator('#status');
+  }
+  
+  void _setupTab(String id, int index)
+  {
+    Element tab = document.query(id);
+    
+    void tabClicked(e)
+    {
+      // Remove the selected class
+      _selectedTab.classes.remove('selected');
+      
+      // Set the tab as selected
+      tab.classes.add('selected');
+      _selectedTab = tab;
+      
+      // Notify that the tab was clicked
+      _onTabClicked(index);
+    }
+    
+    tab.on.click.add(tabClicked);
+  }
+  
+  //---------------------------------------------------------------------
+  // Update methods
+  //---------------------------------------------------------------------  
+  
+  void update()
+  {
+    _gamePadCanvas.draw();
+  }
+  
+  //---------------------------------------------------------------------
+  // Connection methods
+  //---------------------------------------------------------------------
+
+  /**
+   * Callback to initiate/terminate the server connection.
+   */
+  void _onButtonClicked(_)
+  {
+    if (_connected)
+    {
+      // Close the connection
+      // UI will be updated in the close callbck
+      GamePad.disconnectFromServer();
+    }
+    else
+    {
+      // Initiate the connection
+      GamePad.connectToServer(_url.value, _onConnectionOpened, _onConnectionClosed);
+      
+      // Update the UI
+      _onConnectionInitiated();
+    }
+  }
+    
+  /**
+   * Callback for when the server connection is initiated.
+   */
+  void _onConnectionInitiated()
+  {
+    // Disble the button
+    _connectButton.disabled = true;
+    
+    // Hide the error message
+    _errorMessage.hideError();
+    
+    // Disble the url field
+    _url.disabled = true;
+    
+    // Change the status indicator
+    _statusIndicator.status = ConnectionStatus.Connecting;
+  }
+  
+  /**
+   * Callback for when the server connection is opened.
+   */
+  void _onConnectionOpened(_)
+  {
+    // Connection was opened
+    _connected = true;
+    
+    // Change the button to disconnect
+    _connectButton.disabled = false;
+    _connectButton.value = 'Disconnect';
+    _connectButton.classes.clear();
+    _connectButton.classes.add('disconnect');
+    
+    // Change the status indicator
+    _statusIndicator.status = ConnectionStatus.Connected;
+  }
+  
+  /**
+   * Callback for when the server connection is closed.
+   */
+  void _onConnectionClosed(CloseEvent e)
+  {
+    // Check for an abnomal close
+    if (e.code == 1006)
+    {
+      String message = _connected ? "Server connection was lost" : "Could not connect to server";
+
+      _errorMessage.showError(message);
+    }    
+    
+    // Connection was closed
+    _connected = false;
+    
+    // Enable the url field
+    _url.disabled = false;
+    
+    // Change the button to connect
+    _connectButton.disabled = false;
+    _connectButton.value = 'Connect';
+    _connectButton.classes.clear();
+    _connectButton.classes.add('connect');
+    
+    // Change the status indicator
+    _statusIndicator.status = ConnectionStatus.Disconnected;
+  }
+  
+  //---------------------------------------------------------------------
+  // Tab methods
+  //---------------------------------------------------------------------
+  
+  /**
+   * Callback for when a tab is selected.
+   */
+  void _onTabClicked(int index)
+  {
+    _gamePadCanvas.playerIndex = index;
+  }
+}
+
+/// The application
+Application _application;
+
+/*
 GamePadCanvas _canvas;
 ErrorMessage _errorMessage;
 
@@ -99,13 +282,14 @@ void setupTab(String id, int index)
   
   tab.on.click.add(tabClicked);
 }
+*/
 
 /**
  * Updates the canvas.
  */
 bool update(int time)
 {
-  _canvas.draw();
+  _application.update();
   
   window.requestAnimationFrame(update);
 }
@@ -115,27 +299,9 @@ void main()
   // Setup the gamepad class
   GamePad.onInitialize();
   
-  // Setup the error message
-  _errorMessage = new ErrorMessage('#errorMessage');
-  
-  // Setup the status indicator
-  _status = document.query('#status');
-  
-  // Setup the gamepad canvas
-  _canvas = new GamePadCanvas('#gamepad');
-  
-  // Setup the tabbed UI
-  _selected = document.query('#player1');
-  setupTab('#player1', 0);
-  setupTab('#player2', 1);
-  setupTab('#player3', 2);
-  setupTab('#player4', 3);
-  
-  // Setup the connection button
-  _connectButton = document.query('#connect');
-  _connectButton.on.click.add(connectClicked);
-  _url = document.query('#url');
-  
+  // Setup the application
+  _application = new Application();
+
   // Start the canvas animation
   window.requestAnimationFrame(update);
 }
