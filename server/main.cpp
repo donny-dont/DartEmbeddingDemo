@@ -44,6 +44,7 @@ namespace
 
 	const char* __source =
 		"#import('embed:input');\n"
+		"//#import('dart:io');\n"
 		"GamePadState state = null;\n"
 		"\n"
 		"void main()\n"
