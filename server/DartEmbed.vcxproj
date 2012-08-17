@@ -10,6 +10,27 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DartEmbed\GamePad.hpp" />
+    <ClInclude Include="DartEmbed\Isolate.hpp" />
+    <ClInclude Include="DartEmbed\VirtualMachine.hpp" />
+    <ClInclude Include="src\Arguments.hpp" />
+    <ClInclude Include="src\BuiltinLibraries.hpp" />
+    <ClInclude Include="src\dart_api.h" />
+    <ClInclude Include="src\isolate_data.h" />
+    <ClInclude Include="src\NativeResolution.hpp" />
+    <ClInclude Include="src\PlatformWindows.hpp" />
+    <ClInclude Include="src\ScriptLibrary.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\BuiltinLibraries.cpp" />
+    <ClCompile Include="src\CoreLibrary.cpp" />
+    <ClCompile Include="src\GamePad.cpp" />
+    <ClCompile Include="src\IOLibrary.cpp" />
+    <ClCompile Include="src\Isolate.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ScriptLibrary.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BCF473E1-6D4E-48CC-8186-08740A376921}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -50,12 +71,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>XInput.lib;Ws2_32.lib;libdart_builtin.lib;libdart_export.lib;libdart_lib_withcore.lib;libdart_vm.lib;libdouble_conversion.lib;libjscre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;ws2_32.lib;Rpcrt4.lib;libdart_aux.lib;libdart_builtin.lib;libdart_export.lib;libdart_lib.lib;libdart_vm.lib;libdouble_conversion.lib;libjscre.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib\Debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -68,6 +90,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -78,23 +101,6 @@
       <AdditionalDependencies>XInput.lib;Ws2_32.lib;libdart_builtin.lib;libdart_export.lib;libdart_lib_withcore.lib;libdart_vm.lib;libdouble_conversion.lib;libjscre.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="dart_api.h" />
-    <ClInclude Include="dart_debugger_api.h" />
-    <ClInclude Include="GamePad.hpp" />
-    <ClInclude Include="Hash.hpp" />
-    <ClInclude Include="InputScriptLibrary.hpp" />
-    <ClInclude Include="Interpreter.hpp" />
-    <ClInclude Include="PlatformWindows.hpp" />
-    <ClInclude Include="ScriptLibrary.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="GamePad.cpp" />
-    <ClCompile Include="InputScriptLibrary.cpp" />
-    <ClCompile Include="Interpreter.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="ScriptLibrary.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
