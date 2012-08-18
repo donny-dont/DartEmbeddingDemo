@@ -266,6 +266,8 @@ namespace
 
 		assert(nativeFunctionName);
 
+		printf("Resolving: %s\n", nativeFunctionName);
+
 		NativeCallHash hash;
 		fnv1aHashFunctionCall(nativeFunctionName, &hash);
 

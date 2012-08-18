@@ -264,13 +264,13 @@ class GamePadView
 
   void _updateTriggerValues(Element element, double value)
   {
-    element.innerHTML = value.toStringAsPrecision(3);
+    element.innerHTML = value.toStringAsFixed(3);
   }
 
   void _updateThumbstickValues(Element xElement, Element yElement, Point value)
   {
-    xElement.innerHTML = value.x.toStringAsPrecision(3);
-    yElement.innerHTML = value.y.toStringAsPrecision(3);
+    xElement.innerHTML = value.x.toStringAsFixed(3);
+    yElement.innerHTML = value.y.toStringAsFixed(3);
   }
 
   //---------------------------------------------------------------------

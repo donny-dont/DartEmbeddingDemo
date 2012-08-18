@@ -179,8 +179,8 @@ class VibrationControls
     double leftMotor = _leftMotorValues[_playerIndex];
     double rightMotor = _rightMotorValues[_playerIndex];
 
-    _leftMotorElement.innerHTML = leftMotor.toStringAsPrecision(3);
-    _rightMotorElement.innerHTML = rightMotor.toStringAsPrecision(3);
+    _leftMotorElement.innerHTML = leftMotor.toStringAsFixed(3);
+    _rightMotorElement.innerHTML = rightMotor.toStringAsFixed(3);
 
     _leftMotorInputElement.valueAsNumber = leftMotor * _maxValue;
     _rightMotorInputElement.valueAsNumber = rightMotor * _maxValue;
@@ -193,7 +193,7 @@ class VibrationControls
       double value = input.valueAsNumber / _maxValue;
       list[_playerIndex] = value;
 
-      display.innerHTML = value.toStringAsPrecision(3);
+      display.innerHTML = value.toStringAsFixed(3);
 
       // Notify that a value has changed
       _onValueChanged();

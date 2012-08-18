@@ -135,10 +135,10 @@ void updateGamePads()
 				gamePad.setPacketNumber(packetNumber);
 
 				// Set the thumbsticks
-				gamePad.setLeftThumbstickX ((float)state.Gamepad.sThumbLX / 65535.0f);
-				gamePad.setLeftThumbstickY ((float)state.Gamepad.sThumbLY / 65535.0f);
-				gamePad.setRightThumbstickX((float)state.Gamepad.sThumbRX / 65535.0f);
-				gamePad.setRightThumbstickY((float)state.Gamepad.sThumbRY / 65535.0f);
+				gamePad.setLeftThumbstickX ((float)state.Gamepad.sThumbLX / 32767.0f);
+				gamePad.setLeftThumbstickY ((float)state.Gamepad.sThumbLY / 32767.0f);
+				gamePad.setRightThumbstickX((float)state.Gamepad.sThumbRX / 32767.0f);
+				gamePad.setRightThumbstickY((float)state.Gamepad.sThumbRY / 32767.0f);
 
 				// Set the trigger
 				gamePad.setLeftTrigger((float)state.Gamepad.bLeftTrigger / 255.0f);
