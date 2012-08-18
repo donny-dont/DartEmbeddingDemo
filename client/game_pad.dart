@@ -48,19 +48,19 @@ class Vector2D implements Point
 class GamePadState
 {
   static final int _dPadUp        = 1 <<  0;
-  static final int _dPadLeft      = 1 <<  1;
-  static final int _dPadRight     = 1 <<  2;
-  static final int _dPadDown      = 1 <<  3;
+  static final int _dPadDown      = 1 <<  1;
+  static final int _dPadLeft      = 1 <<  2;
+  static final int _dPadRight     = 1 <<  3;
   static final int _start         = 1 <<  4;
   static final int _back          = 1 <<  5;
   static final int _leftThumb     = 1 <<  6;
   static final int _rightThumb    = 1 <<  7;
   static final int _leftShoulder  = 1 <<  8;
   static final int _rightShoulder = 1 <<  9;
-  static final int _aButton       = 1 << 11;
-  static final int _bButton       = 1 << 12;
-  static final int _xButton       = 1 << 13;
-  static final int _yButton       = 1 << 14;
+  static final int _aButton       = 1 << 12;
+  static final int _bButton       = 1 << 13;
+  static final int _xButton       = 1 << 14;
+  static final int _yButton       = 1 << 15;
 
   /// Whether the controller is connected
   bool _connected;

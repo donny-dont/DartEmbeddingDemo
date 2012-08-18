@@ -17,6 +17,7 @@
     <ClInclude Include="src\Arguments.hpp" />
     <ClInclude Include="src\BuiltinLibraries.hpp" />
     <ClInclude Include="src\dart_api.h" />
+    <ClInclude Include="src\EmbedLibraries.hpp" />
     <ClInclude Include="src\isolate_data.h" />
     <ClInclude Include="src\NativeResolution.hpp" />
     <ClInclude Include="src\PlatformWindows.hpp" />
@@ -26,6 +27,7 @@
     <ClCompile Include="src\BuiltinLibraries.cpp" />
     <ClCompile Include="src\CoreLibrary.cpp" />
     <ClCompile Include="src\GamePad.cpp" />
+    <ClCompile Include="src\InputLibrary.cpp" />
     <ClCompile Include="src\IOLibrary.cpp" />
     <ClCompile Include="src\Isolate.cpp" />
     <ClCompile Include="src\main.cpp" />

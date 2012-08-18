@@ -54,9 +54,9 @@ class GamePadView
   /// Position of the B button
   static final Point2D _bButtonPosition = const Point2D(666, 122);
   /// Position of the start button
-  static final Point2D _startButtonPosition = const Point2D(318, 154);
+  static final Point2D _startButtonPosition = const Point2D(487, 154);
   /// Position of the back button
-  static final Point2D _backButtonPosition = const Point2D(487, 154);
+  static final Point2D _backButtonPosition = const Point2D(318, 154);
   /// Position of the left shoulder button
   static final Point2D _leftShoulderButtonPosition = const Point2D(166, 22);
   /// Position of the right shoulder button
@@ -369,7 +369,7 @@ class GamePadView
     _context.drawImage(image, imageX, imageY);
 
     if (pressed)
-      _drawCircleAt(12, centerX, centerY);
+      _drawCircleAt(12, centerX - _controllerPosition.x, centerY - _controllerPosition.y);
   }
 
   void _drawTriggerMeter(Point position, num fill)

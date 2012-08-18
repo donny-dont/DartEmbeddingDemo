@@ -289,6 +289,10 @@ namespace
 		__libraryInitialized = true;
 	}
 
+	/**
+	 * Native resolver for the dart:io library.
+	 */
+	//CREATE_NATIVE_RESOLVER(__ioLibraryResolver, __libraryEntries)
 	Dart_NativeFunction __ioLibraryResolver(Dart_Handle name, int argumentCount)
 	{
 		const char* nativeFunctionName = 0;
@@ -318,17 +322,20 @@ namespace
 					functionEntry++;
 				}
 
-				// Not within the class
 				return 0;
 			}
 
 			classEntry++;
 		}
 
-		// Not within the library
 		return 0;
 	}
 
+	/**
+	 * Initialize the dart:io library.
+	 *
+	 * \param library The IO library to initialize.
+	 */
 	void __ioLibraryInitializer(Dart_Handle library)
 	{
 		Dart_Handle timerClosure = Dart_Invoke(library, Dart_NewString("_getTimerFactoryClosure"), 0, 0);

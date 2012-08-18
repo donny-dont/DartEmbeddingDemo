@@ -8,15 +8,15 @@
  * ---------------------------------------------------------------------
  *
  * Copyright (c) 2012 Don Olmstead
- * 
+ *
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
  * arising from the use of this software.
- * 
+ *
  * Permission is granted to anyone to use this software for any purpose,
  * including commercial applications, and to alter it and redistribute it
  * freely, subject to the following restrictions:
- * 
+ *
  *   1. The origin of this software must not be misrepresented; you must not
  *   claim that you wrote the original software. If you use this software
  *   in a product, an acknowledgment in the product documentation would be
@@ -24,7 +24,7 @@
  *
  *   2. Altered source versions must be plainly marked as such, and must not be
  *   misrepresented as being the original software.
- * 
+ *
  *   3. This notice may not be removed or altered from any source
  *   distribution.
  */
@@ -54,9 +54,7 @@ namespace DartEmbed
 			Four,
 			/// The number of enumerations
 			Size
-
 		} ; // end enum Enum
-
 	} // end namespace PlayerIndex
 
 	/**
@@ -131,6 +129,46 @@ namespace DartEmbed
 				_packetNumber = value;
 			}
 
+			inline float getLeftThumbstickX() const
+			{
+				return _leftThumbstickX;
+			}
+
+			inline void setLeftThumbstickX(float value)
+			{
+				_leftThumbstickX = value;
+			}
+
+			inline float getLeftThumbstickY() const
+			{
+				return _leftThumbstickY;
+			}
+
+			inline void setLeftThumbstickY(float value)
+			{
+				_leftThumbstickY = value;
+			}
+
+			inline float getRightThumbstickX() const
+			{
+				return _rightThumbstickX;
+			}
+
+			inline void setRightThumbstickX(float value)
+			{
+				_rightThumbstickX = value;
+			}
+
+			inline float getRightThumbstickY() const
+			{
+				return _rightThumbstickY;
+			}
+
+			inline void setRightThumbstickY(float value)
+			{
+				_rightThumbstickY = value;
+			}
+
 			inline void setLeftTrigger(float value)
 			{
 				_leftTrigger = value;
@@ -139,6 +177,16 @@ namespace DartEmbed
 			inline void setRightTrigger(float value)
 			{
 				_rightTrigger = value;
+			}
+
+			inline std::int32_t getButtons() const
+			{
+				return _buttons;
+			}
+
+			inline void setButtons(std::int32_t value)
+			{
+				_buttons = value;
 			}
 
 		//----------------------------------------------------------------------
@@ -157,9 +205,20 @@ namespace DartEmbed
 			 * need to be copied again.
 			 */
 			std::int32_t _packetNumber;
+			/// Left thumbstick X value
+			float _leftThumbstickX;
+			/// Left thumbstick Y value
+			float _leftThumbstickY;
+			/// Right thumbstick X value
+			float _rightThumbstickX;
+			/// Right thumbstick Y value
+			float _rightThumbstickY;
+			/// Left trigger value
 			float _leftTrigger;
+			/// Right trigger value
 			float _rightTrigger;
-
+			/// Button state
+			std::int32_t _buttons;
 	} ; // end class GamePadState
 
 	/**
@@ -181,7 +240,6 @@ namespace DartEmbed
 		 * \param rightMoto The speed of the high-frequency right motor.
 		 */
 		void setVibration(PlayerIndex::Enum player, const float leftMotor, const float rightMotor);
-
 	} // end namespace GamePad
 }
 

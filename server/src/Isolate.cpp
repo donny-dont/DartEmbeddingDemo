@@ -8,15 +8,15 @@
  * ---------------------------------------------------------------------
  *
  * Copyright (c) 2012 Don Olmstead
- * 
+ *
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
  * arising from the use of this software.
- * 
+ *
  * Permission is granted to anyone to use this software for any purpose,
  * including commercial applications, and to alter it and redistribute it
  * freely, subject to the following restrictions:
- * 
+ *
  *   1. The origin of this software must not be misrepresented; you must not
  *   claim that you wrote the original software. If you use this software
  *   in a product, an acknowledgment in the product documentation would be
@@ -24,7 +24,7 @@
  *
  *   2. Altered source versions must be plainly marked as such, and must not be
  *   misrepresented as being the original software.
- * 
+ *
  *   3. This notice may not be removed or altered from any source
  *   distribution.
  */
@@ -45,6 +45,7 @@
 
 #include "dart_api.h"
 #include "isolate_data.h"
+#include "NativeResolution.hpp"
 #include "ScriptLibrary.hpp"
 #include "BuiltinLibraries.hpp"
 using namespace DartEmbed;
@@ -171,7 +172,7 @@ namespace
 
 		const char* scriptPathString;
 		Dart_StringToCString(scriptPath, &scriptPathString);
-		
+
 		FILE* file = fopen(scriptPathString, "r");
 
 		if (file)
@@ -255,8 +256,34 @@ namespace
 			if (isDartScheme)
 				return url;
 
+			// Check other libraries that were added
+			std::int32_t hash = fnv1aHash(urlString);
+			std::size_t count = __libraries.size();
+
+			for (std::size_t i = 0; i < count; ++i)
+			{
+				ScriptLibrary* library = __libraries[i];
+
+				if (hash == library->getHashedName())
+					return url;
+			}
 		}
-		return ::Dart_Null();
+		else
+		{
+			// Check other libraries that were added
+			std::int32_t hash = fnv1aHash(urlString);
+			std::size_t count = __libraries.size();
+
+			for (std::size_t i = 0; i < count; ++i)
+			{
+				ScriptLibrary* library = __libraries[i];
+
+				if (hash == library->getHashedName())
+					return library->load();
+			}
+		}
+
+		return Dart_Error("Do not know how to load '%s'", urlString);
 	}
 
 } // end anonymous namespace
@@ -270,15 +297,17 @@ Isolate::Isolate(Dart_Isolate isolate, Dart_Handle library, Isolate* parent)
 	, _library(library)
 	, _parent(parent)
 {
+	__runningIsolates.push_back(this);
 }
 
 //----------------------------------------------------------------------
 
 Isolate::~Isolate()
 {
-	Dart_ExitScope();
+	//Dart_ExitScope();
 
-	Dart_ShutdownIsolate();
+	//Dart_EnterIsolate(_isolate);
+	//Dart_ShutdownIsolate();
 }
 
 //----------------------------------------------------------------------
@@ -406,9 +435,7 @@ bool Isolate::isolateCreateCallback(const char* scriptUri, const char* main, voi
 
 void Isolate::isolateShutdownCallback(void* callbackData)
 {
-	Isolate* isolate = static_cast<Isolate*>(callbackData);
-
-	delete isolate;
+	
 }
 
 //----------------------------------------------------------------------
@@ -450,15 +477,36 @@ void VirtualMachine::terminate()
 {
 	if (__initialized)
 	{
+		// Shutdown the libraries
 		delete __coreLibrary;
 		delete __ioLibrary;
 		delete __jsonLibrary;
 		delete __uriLibrary;
 		delete __cryptoLibrary;
 		delete __utfLibrary;
+
+		std::size_t count = __libraries.size();
+
+		for (std::size_t i = 0; i < count; ++i)
+			delete __libraries[i];
+
+		__libraries.clear();
 	}
 
 	__initialized = false;
+}
+
+//----------------------------------------------------------------------
+
+void VirtualMachine::loadScriptLibrary(
+	const char* name,
+	const char* source,
+	Dart_NativeEntryResolver nativeResolver,
+	Dart_LibraryInitializer initializer)
+{
+	ScriptLibrary* library = new ScriptLibrary(name, source, nativeResolver, initializer);
+
+	__libraries.push_back(library);
 }
 
 //----------------------------------------------------------------------

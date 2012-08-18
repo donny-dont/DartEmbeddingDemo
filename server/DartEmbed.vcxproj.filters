@@ -39,6 +39,9 @@
     <ClInclude Include="src\PlatformWindows.hpp">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\EmbedLibraries.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BuiltinLibraries.cpp">
@@ -60,6 +63,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InputLibrary.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

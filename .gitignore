@@ -4,8 +4,8 @@
 *.user
 
 # Visual Studio Directories
-Debug
-Release
+server/Debug
+server/Release
 ipch
 
 # Eclipse Files

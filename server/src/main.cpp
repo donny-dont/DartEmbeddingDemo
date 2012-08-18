@@ -32,6 +32,8 @@
 #include <DartEmbed/GamePad.hpp>
 #include <DartEmbed/Isolate.hpp>
 #include "PlatformWindows.hpp"
+#include "BuiltinLibraries.hpp"
+#include "EmbedLibraries.hpp"
 using namespace DartEmbed;
 
 namespace
@@ -136,6 +138,9 @@ int main()
 	// Initialize the virtual machine
 	VirtualMachine::initialize();
 
+	// Setup the embed libraries
+	EmbedLibraries::createInputLibrary();
+
 	// Start the thread
 	DWORD scriptThreadId;
 	HANDLE scriptThread = CreateThread(
@@ -160,7 +165,6 @@ int main()
 		else
 		{
 			updateGamePads();
-			//updateInterpreter();
 		}
 	}
 

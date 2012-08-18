@@ -44,8 +44,13 @@ namespace
 GamePadState::GamePadState()
 : _connected(false)
 , _packetNumber(0)
+, _leftThumbstickX(0.0f)
+, _leftThumbstickY(0.0f)
+, _rightThumbstickX(0.0f)
+, _rightThumbstickY(0.0f)
 , _leftTrigger(0.0f)
 , _rightTrigger(0.0f)
+, _buttons(0)
 { }
 
 //----------------------------------------------------------------------
@@ -53,8 +58,13 @@ GamePadState::GamePadState()
 GamePadState::GamePadState(const GamePadState& copy)
 : _connected(copy._connected)
 , _packetNumber(copy._packetNumber)
+, _leftThumbstickX(copy._leftThumbstickX)
+, _leftThumbstickY(copy._leftThumbstickY)
+, _rightThumbstickX(copy._rightThumbstickX)
+, _rightThumbstickY(copy._rightThumbstickY)
 , _leftTrigger(copy._leftTrigger)
 , _rightTrigger(copy._rightTrigger)
+, _buttons(copy._buttons)
 { }
 
 //----------------------------------------------------------------------
@@ -64,8 +74,16 @@ GamePadState& GamePadState::operator= (const GamePadState& copy)
 	_connected = copy._connected;
 	_packetNumber = copy._packetNumber;
 
+	_leftThumbstickX = copy._leftThumbstickX;
+	_leftThumbstickY = copy._leftThumbstickY;
+
+	_rightThumbstickX = copy._rightThumbstickX;
+	_rightThumbstickY = copy._rightThumbstickY;
+
 	_leftTrigger  = copy._leftTrigger;
 	_rightTrigger = copy._rightTrigger;
+
+	_buttons = copy._buttons;
 
 	return *this;
 }
@@ -116,9 +134,18 @@ void updateGamePads()
 			{
 				gamePad.setPacketNumber(packetNumber);
 
+				// Set the thumbsticks
+				gamePad.setLeftThumbstickX ((float)state.Gamepad.sThumbLX / 65535.0f);
+				gamePad.setLeftThumbstickY ((float)state.Gamepad.sThumbLY / 65535.0f);
+				gamePad.setRightThumbstickX((float)state.Gamepad.sThumbRX / 65535.0f);
+				gamePad.setRightThumbstickY((float)state.Gamepad.sThumbRY / 65535.0f);
+
 				// Set the trigger
 				gamePad.setLeftTrigger((float)state.Gamepad.bLeftTrigger / 255.0f);
 				gamePad.setRightTrigger((float)state.Gamepad.bRightTrigger / 255.0f);
+
+				// Set the buttons
+				gamePad.setButtons(state.Gamepad.wButtons);
 			}
 		}
 		else
@@ -127,9 +154,18 @@ void updateGamePads()
 			gamePad.setConnected(false);
 			gamePad.setPacketNumber(0);
 
+			// Set the thumbsticks
+			gamePad.setLeftThumbstickX(0.0f);
+			gamePad.setLeftThumbstickY(0.0f);
+			gamePad.setRightThumbstickX(0.0f);
+			gamePad.setRightThumbstickY(0.0f);
+
 			// Set the trigger
 			gamePad.setLeftTrigger(0.0f);
 			gamePad.setRightTrigger(0.0f);
+
+			// Set the buttons
+			gamePad.setButtons(0);
 		}
 	}
 }
