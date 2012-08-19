@@ -37,6 +37,7 @@ body
   text-align:center;
   font-size:24px;
   color:#FF111C;
+  z-index:100;
   font-family:Oswald, Georgia, 'Times New Roman', Times, serif;
 }
 
