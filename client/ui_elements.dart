@@ -38,7 +38,7 @@ class ConnectionStatusIndicator
   /**
    * The status of the server connection.
    */
-  ConnectionStatus get status() => _status;
+  ConnectionStatus get status => _status;
   set status(ConnectionStatus value)
   {
     _status = value;
@@ -150,7 +150,7 @@ class VibrationControls
     _rightMotorInputElement.disabled = disabled;
   }
 
-  int get playerIndex() => _playerIndex;
+  int get playerIndex => _playerIndex;
   set playerIndex(int value)
   {
     _playerIndex = value;

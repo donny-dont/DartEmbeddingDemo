@@ -95,12 +95,13 @@
       <AdditionalIncludeDirectories>.\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>XInput.lib;Ws2_32.lib;libdart_builtin.lib;libdart_export.lib;libdart_lib_withcore.lib;libdart_vm.lib;libdouble_conversion.lib;libjscre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;ws2_32.lib;Rpcrt4.lib;libdart_aux.lib;libdart_builtin.lib;libdart_export.lib;libdart_lib.lib;libdart_vm.lib;libdouble_conversion.lib;libjscre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib\Release</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

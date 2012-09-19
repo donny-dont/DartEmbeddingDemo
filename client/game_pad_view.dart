@@ -239,7 +239,7 @@ class GamePadView
   // Properties
   //---------------------------------------------------------------------
 
-  int get playerIndex() => _playerIndex;
+  int get playerIndex => _playerIndex;
   set playerIndex(int value) { _playerIndex = value; }
 
   //---------------------------------------------------------------------
@@ -353,7 +353,7 @@ class GamePadView
     _context.strokeStyle = _circleFillStyle;
     _context.fillStyle = _circleFillStyle;
     _context.beginPath();
-    _context.arc(x, y, radius, 0, Math.PI*2, true);
+    _context.arc(x, y, radius, 0, 6.28318530718, true); // Math.PI seems to have disappeared
     _context.closePath();
     _context.fill();
   }

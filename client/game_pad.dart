@@ -83,26 +83,26 @@ class GamePadState
     , _rightTrigger = 0.0
     , _buttons = 0;
 
-  bool get isConnected()   => _connected;
-  bool get up()            => _isFlagSet(_dPadUp);
-  bool get down()          => _isFlagSet(_dPadDown);
-  bool get left()          => _isFlagSet(_dPadLeft);
-  bool get right()         => _isFlagSet(_dPadRight);
-  bool get back()          => _isFlagSet(_back);
-  bool get start()         => _isFlagSet(_start);
-  bool get leftShoulder()  => _isFlagSet(_leftShoulder);
-  bool get rightShoulder() => _isFlagSet(_rightShoulder);
-  bool get leftStick()     => _isFlagSet(_leftThumb);
-  bool get rightStick()    => _isFlagSet(_rightThumb);
-  bool get x()             => _isFlagSet(_xButton);
-  bool get y()             => _isFlagSet(_yButton);
-  bool get a()             => _isFlagSet(_aButton);
-  bool get b()             => _isFlagSet(_bButton);
+  bool get isConnected   => _connected;
+  bool get up            => _isFlagSet(_dPadUp);
+  bool get down          => _isFlagSet(_dPadDown);
+  bool get left          => _isFlagSet(_dPadLeft);
+  bool get right         => _isFlagSet(_dPadRight);
+  bool get back          => _isFlagSet(_back);
+  bool get start         => _isFlagSet(_start);
+  bool get leftShoulder  => _isFlagSet(_leftShoulder);
+  bool get rightShoulder => _isFlagSet(_rightShoulder);
+  bool get leftStick     => _isFlagSet(_leftThumb);
+  bool get rightStick    => _isFlagSet(_rightThumb);
+  bool get x             => _isFlagSet(_xButton);
+  bool get y             => _isFlagSet(_yButton);
+  bool get a             => _isFlagSet(_aButton);
+  bool get b             => _isFlagSet(_bButton);
 
-  double get leftTrigger() => _leftTrigger;
-  double get rightTrigger() => _rightTrigger;
-  Vector2D get leftThumbstick() => _leftThumbstick;
-  Vector2D get rightThumbstick() => _rightThumbstick;
+  double get leftTrigger => _leftTrigger;
+  double get rightTrigger => _rightTrigger;
+  Vector2D get leftThumbstick => _leftThumbstick;
+  Vector2D get rightThumbstick => _rightThumbstick;
 
   void cloneTo(GamePadState state)
   {
@@ -145,7 +145,7 @@ class GamePad
   /// The last requested player index
   static int _playerIndex;
 
-  static bool get isConnected() => _connected;
+  static bool get isConnected => _connected;
 
   static void onInitialize()
   {
